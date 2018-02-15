@@ -18,8 +18,9 @@ I completed the following bells and whistles:
 * Replication
 
 #Replication
-I created my replications using Excel. The basic method was: import the data files, create graphs using the data --> insert scatterplot features, style with the Excel WYSIWIG.
+You can find the image files in the images directory. I created my replications using Excel. The basic method was: import the data files, create graphs using the data --> insert scatterplot features, style with the Excel WYSIWIG.
 I found that it was much easier to import and select the data, because I'm very familiar with spreadsheets. In D3, loading and selecting the data, and getting the correct data to populate the corresponding graph, was a huge hurdle.
 However, I was surprised to find that it was actually much easier to style the graphs in D3 than in Excel.
 In D3, I could explicitly specify color, size, shape, etc., whereas in Excel I had to fiddle with windows and dig through an interface to find exactly what I wanted to reset.
 Also, I like how the styling conventions matched the graphic design language that I am accustomed to from working with vector graphics in Illustrator.
+One thing I couldn't achieve in Excel, despite much effort, was importing my custom font. This was easy to do as a webfont using CSS, but really hard to do on my computer's OS. (I could add the font, but my computer wouldn't render it.) Thus my images don't have the spiffy Jurassic Park font.
