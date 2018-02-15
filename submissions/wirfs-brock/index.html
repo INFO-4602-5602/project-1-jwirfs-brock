@@ -121,7 +121,7 @@ d3.csv("data/anscombe_I.csv", function(error, data) {
   xScale.domain([0, d3.max(data, xValue)+1]);
   yScale.domain([0, d3.max(data, yValue)+1]);
 
-  // x-axis
+  // create the x-axis and add labels
   chart1.append("g")
       .attr("class", "xaxis")
       .attr("transform", "translate(0," + height + ")")
@@ -134,7 +134,7 @@ d3.csv("data/anscombe_I.csv", function(error, data) {
       .text("x");
 
 
-  // y-axis
+  // create the y-axis and add labels
   chart1.append("g")
       .attr("class", "y axis")
       .call(yAxis)
@@ -145,7 +145,7 @@ d3.csv("data/anscombe_I.csv", function(error, data) {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("y");
-// title
+// add a title
 chart1.append("text")
 .attr("transform", "translate(20,10)")
 .text("Parts Two and Four | Anscombe 1")
@@ -166,26 +166,32 @@ chart1.append("text")
       .attr("cx", xMap)
       .attr("cy", yMap)
       .html("+")
+  // display x and y coordinates in the correct div for part 4
       .on("click", function(d){
         d3.select("#scatterLabel")
         .html("x = "+xValue(d) + ", y = " + yValue(d))
       })
+
+  // when mouse is over dot, change the fill color
       .on("mouseover", function(d) {
         d3.select(this)
         .style("fill","#77c146")
-
+// This adds in a time delay effect to the tool tips
           tooltip.transition()
                .duration(200)
                .style("opacity", .9);
+  // This displays the x and y values of each point in a tool tip
           tooltip.html("x = "+xValue(d) + ", y = " + yValue(d))
                .style("left", (d3.event.pageX + 5) + "px")
                .style("top", (d3.event.pageY - 28) + "px")
 
       })
+
+  // Set the color back when mouse moves away
       .on("mouseout", function(d) {
         d3.select(this)
           .style("fill","red")
-
+// Make the tool tip fade out
           tooltip.transition()
                .duration(500)
                .style("opacity", 0);
@@ -194,10 +200,10 @@ chart1.append("text")
 
     });
 
-        // Put your part three & four code here ***********************
+  // Put your part three & four code here ***********************
 
 // LINE GRAPH
-        // set the ranges
+        // set the ranges for x and y scales
         var x = d3.scaleLinear().range([0, width]);
         var y = d3.scaleLinear().range([height, 0]);
 
@@ -216,7 +222,7 @@ chart1.append("text")
             .attr("transform",
                   "translate(" + margin.left + "," + margin.top + ")");
 
-        // Get the data
+        // Get the data from the CSV
         d3.csv("data/anscombe_I.csv", function(error, data) {
           if (error) throw error;
 
@@ -246,24 +252,26 @@ chart2.append("text")
           x.domain([0, d3.max(data, function(d) { return d.x; })]);
           y.domain([0, d3.max(data, function(d) { return d.y; })]);
 
-          // Add the valueline path.
+          // Add a line path
           chart2.append("path")
               .data([data])
               .attr("class", "line")
               .attr("d", valueline);
 
-          // Add the X Axis
+          // Add x axis
           chart2.append("g")
               .attr("transform", "translate(0," + height + ")")
               .call(d3.axisBottom(x));
 
-          // Add the Y Axis
+          // Add y axis
           chart2.append("g")
               .call(d3.axisLeft(y));
 
         });
 
 // Put your part five code here ***********************
+
+// Constants indicate dimensions for all four graphs
         var margin1 = {top: 10, right: 20, bottom: 20, left: 30},
             width1 = 500 - margin1.left - margin1.right,
             height1 = 300 - margin1.top - margin1.bottom;
@@ -288,14 +296,13 @@ var chart3 = d3.select("#scatterplotSet").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
 
-    // load data
+    // load data from CSV
 d3.csv("data/anscombe_I.csv", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
     d.x = +d.x;
     d.y = +d.y;
-//    console.log(d);
   });
 
   // don't want dots overlapping axis, so add in buffer to data domain
