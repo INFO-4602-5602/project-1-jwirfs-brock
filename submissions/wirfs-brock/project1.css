@@ -1,0 +1,62 @@
+body {
+    font-family: JurassicPark;
+    font-size: 24px;
+}
+
+g{
+  font-family: JurassicPark;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.point {
+fill: #000;
+}
+
+.label {
+    text-anchor: middle;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: Arial;
+}
+
+
+.dot {
+  fill: #fe0000;
+  stroke: #fbfe01;
+  stroke-width: 3px;
+
+}
+
+.dot2{
+  stroke-width: 1px;
+  stroke: black;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.line {
+  fill: none;
+  stroke: #77c146;
+  stroke-width: 3px;
+}
+
+.xaxis {
+
+}
+
+@font-face {
+    font-family: JurassicPark;
+    src: url(fonts/Jurassic_Park.ttf);
+}

@@ -1,0 +1,575 @@
+<html>
+<head>
+<title>Project 1</title>
+<link rel="stylesheet" href="project1.css"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+    <script src="http://d3js.org/d3.v4.js" charset="utf-8"></script>
+<!--Put your D3 import statement between these two lines-->
+</head>
+
+<body>
+	<div id="partOne">
+        <h1>Part One: </h1>
+	</div>
+
+    <div id="partTwo">
+        <h1>Part Two: </h1>
+        <div id="scatterplot">
+            <p id="scatterLabel"></p>
+        </div>
+	</div>
+
+    <div id="partThree">
+        <h1>Parts Three and Four: </h1>
+        <div id="linegraph">
+        </div>
+	</div>
+
+    <div id="partFive">
+        <h1>Part Five: </h1>
+        <div id="scatterplotSet">
+        </div>
+	</div>
+
+
+    <script type="text/javascript">
+        // Put your part one code here ***********************
+
+var anscombe1 =  d3.csv("data/anscombe_I.csv", function(error, data){
+           if (error) throw error;
+
+
+        checkDataset(data);
+
+});
+
+var anscombe2 =  d3.csv("data/anscombe_II.csv", function(error, data){
+           if (error) throw error;
+
+        checkDataset(data);
+
+});
+
+var anscombe3 =  d3.csv("data/anscombe_III.csv", function(error, data){
+           if (error) throw error;
+
+        checkDataset(data);
+
+});
+
+var anscombe4 =  d3.csv("data/anscombe_IV.csv", function(error, data){
+           if (error) throw error;
+
+
+        checkDataset(data);
+
+});
+
+        // Leave this to test your data uploading. All data uploading should be above this line
+        function checkDataset(dataset) {
+            if (dataset.length == 11)
+                $("#partOne").append("<p>data loaded correctly</p>");
+            else
+                $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
+        }
+
+
+
+// Put your part two code here ***********************
+
+var margin = {top: 20, right: 10, bottom: 20, left: 20},
+    width = 700 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+    // setup x
+var xValue = function(d) { return d.x;}, // data -> value
+    xScale = d3.scaleLinear().range([0, width]), // value -> display
+    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    xAxis = d3.axisBottom(xScale);
+
+// setup y
+var yValue = function(d) { return d.y;}, // data -> value
+    yScale = d3.scaleLinear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.axisLeft(yScale);
+
+
+// add the graph canvas to the body of the webpage
+var chart1 = d3.select("#scatterplot").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("#scatterplot").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+    // load data
+d3.csv("data/anscombe_I.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d.x = +d.x;
+    d.y = +d.y;
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale.domain([0, d3.max(data, xValue)+1]);
+  yScale.domain([0, d3.max(data, yValue)+1]);
+
+  // x-axis
+  chart1.append("g")
+      .attr("class", "xaxis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("x");
+
+
+  // y-axis
+  chart1.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("y");
+// title
+chart1.append("text")
+.attr("transform", "translate(20,10)")
+.text("Parts Two and Four | Anscombe 1")
+
+// Add dinosaur background
+chart1.append("text")
+.attr("transform", "translate(150,300)")
+.text("+")
+.style("opacity","0.2")
+.style("font-size","500px")
+
+  // draw dots
+  chart1.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 10)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .html("+")
+      .on("click", function(d){
+        d3.select("#scatterLabel")
+        .html("x = "+xValue(d) + ", y = " + yValue(d))
+      })
+      .on("mouseover", function(d) {
+        d3.select(this)
+        .style("fill","#77c146")
+
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", .9);
+          tooltip.html("x = "+xValue(d) + ", y = " + yValue(d))
+               .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px")
+
+      })
+      .on("mouseout", function(d) {
+        d3.select(this)
+          .style("fill","red")
+
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      });
+
+
+    });
+
+        // Put your part three & four code here ***********************
+
+// LINE GRAPH
+        // set the ranges
+        var x = d3.scaleLinear().range([0, width]);
+        var y = d3.scaleLinear().range([height, 0]);
+
+        // define the line
+        var valueline = d3.line()
+            .x(function(d) { return x(d.x); })
+            .y(function(d) { return y(d.y); });
+
+        // append the svg obgect to the body of the page
+        // appends a 'group' element to 'svg'
+        // moves the 'group' element to the top left margin
+        var chart2 = d3.select("#linegraph").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform",
+                  "translate(" + margin.left + "," + margin.top + ")");
+
+        // Get the data
+        d3.csv("data/anscombe_I.csv", function(error, data) {
+          if (error) throw error;
+
+          // change string (from CSV) into number format
+          data.forEach(function(d) {
+            d.x = +d.x;
+            d.y = +d.y;
+            data.sort(function(a, b) {
+  return a.x - b.x;
+});
+
+          });
+// Add title
+chart2.append("text")
+.attr("transform","translate(20,20)")
+.text("Part Three | Anscombe I")
+
+
+          // Add dinosaur background
+          chart2.append("text")
+          .attr("transform", "translate(150,300)")
+          .text("+")
+          .style("opacity","0.2")
+          .style("font-size","500px")
+
+          // Scale the range of the data
+          x.domain([0, d3.max(data, function(d) { return d.x; })]);
+          y.domain([0, d3.max(data, function(d) { return d.y; })]);
+
+          // Add the valueline path.
+          chart2.append("path")
+              .data([data])
+              .attr("class", "line")
+              .attr("d", valueline);
+
+          // Add the X Axis
+          chart2.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x));
+
+          // Add the Y Axis
+          chart2.append("g")
+              .call(d3.axisLeft(y));
+
+        });
+
+// Put your part five code here ***********************
+        var margin1 = {top: 10, right: 20, bottom: 20, left: 30},
+            width1 = 500 - margin1.left - margin1.right,
+            height1 = 300 - margin1.top - margin1.bottom;
+
+            // setup x
+        var xValue1 = function(d) { return d.x;}, // data -> value
+            xScale1 = d3.scaleLinear().range([0, width1]), // value -> display
+            xMap1 = function(d) { return xScale1(xValue1(d));}, // data -> display
+            xAxis1 = d3.axisBottom(xScale1);
+
+        // setup y
+        var yValue1 = function(d) { return d.y;}, // data -> value
+            yScale1 = d3.scaleLinear().range([height1, 0]), // value -> display
+            yMap1 = function(d) { return yScale1(yValue1(d));}, // data -> display
+            yAxis1 = d3.axisLeft(yScale1);
+
+// Anscombe 1
+// add the graph canvas to the body of the webpage
+var chart3 = d3.select("#scatterplotSet").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+    // load data
+d3.csv("data/anscombe_I.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d.x = +d.x;
+    d.y = +d.y;
+//    console.log(d);
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale1.domain([0, d3.max(data, xValue1)+1]);
+  yScale1.domain([0, d3.max(data, yValue1)+1]);
+
+  // x-axis
+  chart3.append("g")
+      .attr("class", "xAxis1")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(xAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width1)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("x");
+
+  // y-axis
+  chart3.append("g")
+      .attr("class", "y axis")
+      .call(yAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .style("font-family","Arial")
+      .text("y");
+
+      // title
+      chart3.append("text")
+      .text("Anscombe I")
+      .style("font-size","16px")
+      .attr("transform", "translate(20,10)")
+
+      // Add dinosaur background
+      chart3.append("text")
+      .attr("transform", "translate(100,200)")
+      .text("*")
+      .style("opacity","0.1")
+      .style("font-size","300px")
+
+  // draw dots
+  chart3.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot2")
+      .attr("r", 3.5)
+      .attr("cx", xMap1)
+      .attr("cy", yMap1)
+      .style("fill", "grey")
+      .attr("class","dot2")
+
+
+      });
+// Anscombe 2
+
+// add the graph canvas to the body of the webpage
+var chart4 = d3.select("#scatterplotSet").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+    // load data
+d3.csv("data/anscombe_II.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d.x = +d.x;
+    d.y = +d.y;
+//    console.log(d);
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale1.domain([0, d3.max(data, xValue1)+1]);
+  yScale1.domain([0, d3.max(data, yValue1)+1]);
+
+  // title
+  chart4.append("text")
+  .text("Anscombe II")
+  .style("font-size","16px")
+  .attr("transform", "translate(20,10)")
+
+  // Add dinosaur background
+  chart4.append("text")
+  .attr("transform", "translate(100,200)")
+  .text("*")
+  .style("opacity","0.1")
+  .style("font-size","300px")
+
+  // x-axis
+  chart4.append("g")
+      .attr("class", "xAxis1")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(xAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width1)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("x");
+
+  // y-axis
+  chart4.append("g")
+      .attr("class", "y axis")
+      .call(yAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("y");
+
+  // draw dots
+  chart4.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot2")
+      .attr("r", 3.5)
+      .attr("cx", xMap1)
+      .attr("cy", yMap1)
+      .style("fill", "orange")
+      .attr("class","dot2")
+});
+// Anscombe 3
+// add the graph canvas to the body of the webpage
+var chart5 = d3.select("#scatterplotSet").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+
+    // load data
+d3.csv("data/anscombe_III.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d.x = +d.x;
+    d.y = +d.y;
+//    console.log(d);
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale1.domain([0, d3.max(data, xValue1)+1]);
+  yScale1.domain([0, d3.max(data, yValue1)+1]);
+
+  // title
+  chart5.append("text")
+  .text("Anscombe III")
+  .style("font-size","16px")
+  .attr("transform", "translate(20,10)")
+
+  // Add dinosaur background
+  chart5.append("text")
+  .attr("transform", "translate(100,200)")
+  .text("*")
+  .style("opacity","0.1")
+  .style("font-size","300px")
+
+  // x-axis
+  chart5.append("g")
+      .attr("class", "xAxis1")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(xAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width1)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("x");
+
+  // y-axis
+  chart5.append("g")
+      .attr("class", "y axis")
+      .call(yAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("y");
+
+  // draw dots
+  chart5.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot2")
+      .attr("r", 3.5)
+      .attr("cx", xMap1)
+      .attr("cy", yMap1)
+      .attr("class","dot2")
+      .style("fill","lightblue")
+});
+// Anscombe 4
+// add the graph canvas to the body of the webpage
+var chart6 = d3.select("#scatterplotSet").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+
+    // load data
+d3.csv("data/anscombe_IV.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d.x = +d.x;
+    d.y = +d.y;
+//    console.log(d);
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale1.domain([0, d3.max(data, xValue1)+1]);
+  yScale1.domain([0, d3.max(data, yValue1)+1]);
+
+  // x-axis
+  chart6.append("g")
+      .attr("class", "xAxis1")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(xAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width1)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("x");
+
+  // y-axis
+  chart6.append("g")
+      .attr("class", "y axis")
+      .call(yAxis1)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("y");
+
+      // title
+      chart6.append("text")
+      .text("Anscombe IV")
+      .style("font-size","16px")
+      .attr("transform", "translate(20,10)")
+
+      // Add dinosaur background
+      chart6.append("text")
+      .attr("transform", "translate(100,200)")
+      .text("*")
+      .style("opacity","0.1")
+      .style("font-size","300px")
+
+  // draw dots
+  chart6.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot2")
+      .attr("r", 3.5)
+      .attr("cx", xMap1)
+      .attr("cy", yMap1)
+      .attr("class","dot2")
+      .style("fill", "purple")
+
+});
+
+    </script>
+</body>
+
+
+</html>
